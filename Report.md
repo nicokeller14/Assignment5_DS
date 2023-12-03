@@ -27,6 +27,7 @@ https://thesecretlivesofdata.com/raft/
 2. Perform one request on the leader, wait until the leader is committed by all servers. Pause the simulation.
 Then perform a new request on the leader. Take a screenshot, stop the leader and then resume the simulation.
 Once, there is a new leader, perform a new request and then resume the previous leader. Once, this new request is committed by all servers, pause the simulation and take a screenshot. Explain what happened?
+
 Ans: We begin with the election process and a leader is chosen. After that we make a request and all other nodes commit the request.
 After making the second request we simulate a leader failure and the request isn't fully replicated nor commmited.
 While having the leader down the nodes notice the abscence of the heartbeats and start a new leader election process.
