@@ -85,7 +85,6 @@ Perform a Get request for the key ``a" on the leader. What is the new status? Wh
 > The request says /a now holds "["cat", "dog", "mouse"]". And due to the fact that a GET request does not modify 
 > the state of the server, the status output stays mostly the same. 
 
-
 # Task 3
 
 Shut down the server that acts as a leader. Report the status that you get from the servers that remain active after shutting down the leader.
