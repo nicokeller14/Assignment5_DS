@@ -41,7 +41,7 @@ availability even if one leader goes down.
 Then resume all servers and restart the simulation. After the leader election, pause the simulation and take a screenshot. Explain what happened.
 
 Ans: After stopping the leader and two other nodes, we are left with only two nodes. This leaves the cluster with no majority of nodes working,
-thus not being able to choose a new leader in the cluster. ach failed election attempt results in an increase in the Raft term as nodes continually timeout and start 
+thus not being able to choose a new leader in the cluster. Each failed election attempt results in an increase in the Raft term as nodes continually timeout and start 
 new elections. So we have now a leaderless state, where a term is increased in every failed attempt to choose a new leader.
 When resuming all the other nodes, the election process begins a new leader is chosen. This demonstrates raft's ability to handle multiple node failures, 
 and even including the loss of a leader. 
@@ -49,7 +49,8 @@ and even including the loss of a leader.
 # Task 2
 
 Indicate the replies that you get from the "/admin/status" endpoint of the HTTP service for each servers. Which server is the leader? Can there be multiple leaders?
-Ans:
+
+Ans: 
 
 Perform an Append request for the key ``a" on the leader. What is the new status? What changes occurred and why (if any)?
 
@@ -57,7 +58,7 @@ Ans:
 
 Perform a Get request for the key ``a" on the leader. What is the new status? What change (if any) happened and why?
 
-Ans:
+Ans: 
 
 
 
