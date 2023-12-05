@@ -101,27 +101,32 @@ the currently values in /a.
 
 Shut down the server that acts as a leader. Report the status that you get from the servers that remain active after shutting down the leader.
 
-Ans:
+> Ans: Hre are the messages i get after running the /admin/status request. They both give 200 OK and the following complete responses:
+> If i shut down Server 0 (the current leader), then Server 1 becomes the leader as can be seen here: 'leader': TCPNode('127.0.0.1:6001')
+> {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6001'), 'state': 2, 'leader': TCPNode('127.0.0.1:6001'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6002': 2, 'partner_node_status_server_127.0.0.1:6000': 0, 'readonly_nodes_count': 0, 'log_len': 3, 'last_applied': 3, 'commit_idx': 3, 'raft_term': 3, 'next_node_idx_count': 2, 'next_node_idx_server_127.0.0.1:6002': 4, 'next_node_idx_server_127.0.0.1:6000': 3, 'match_idx_count': 2, 'match_idx_server_127.0.0.1:6002': 3, 'match_idx_server_127.0.0.1:6000': 0, 'leader_commit_idx': 3, 'uptime': 62, 'self_code_version': 0, 'enabled_code_version': 0}
 
- Perform a Put request for the key "a". Then, restart the server from the previous point, and indicate the new status for the three servers. Indicate the result of a Get request for the key ``a" to the previous leader.
+> And Server 2 says the Server 1 is the leader:
+> {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6002'), 'state': 0, 'leader': TCPNode('127.0.0.1:6001'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6000': 0, 'partner_node_status_server_127.0.0.1:6001': 2, 'readonly_nodes_count': 0, 'log_len': 3, 'last_applied': 3, 'commit_idx': 3, 'raft_term': 3, 'next_node_idx_count': 0, 'match_idx_count': 0, 'leader_commit_idx': 3, 'uptime': 81, 'self_code_version': 0, 'enabled_code_version': 0}
 
-Ans:
+Perform a Put request for the key "a". Then, restart the server from the previous point, and indicate the new status for the three servers. Indicate the result of a Get request for the key ``a" to the previous leader.
+
+> Ans: DO I DO IT ON THE SERVER I HAVE SHUT DOWN OR ON THE CURRENT LEADER?
 
 Has the Put request been replicated? Indicate which steps lead to a new election and which ones do not. Justify your answer using the statuses returned by the servers.
 
-Ans:
+> Ans:
 
 Shut down two servers, including the leader --- starting with the server that is not the leader. Report the status of the remaining servers and explain what happened.
 
-Ans:
+> Ans:
 
 Can you perform Get, Put, or Append requests in this system state? Justify your answer.
 
-Ans:
+> Ans:
 
 Restart the servers and note down the new status. Describe what happened.
 
-Ans:
+> Ans:
 
 
 
@@ -152,6 +157,7 @@ Fault tolerance in raft is handled this way:
 - once a log entry is seen as committed, it is guaranteed to be present in any future leader, providing data durability
 - as long as there is a mjority, consensus can be reached
 - log consistency and leader uniqueness are maintained even in the presence of network delays, partitions, and node restarts.
+- 
 Source: https://towardsdatascience.com/raft-algorithm-explained-a7c856529f40
 
 
@@ -164,7 +170,6 @@ It is not only difficuly to reach consensus but also to identify the problem.
 
 And no, raft can't inherently handle these type of failures. The algorightm has to be updated in order to do so.
 It needs additional mechanisms to detect and mitigate deceitful or inconsistent behavior among nodes. 
-
 
 Source: https://www.scs.stanford.edu/17au-cs244b/labs/projects/clow_jiang.pdf
 https://en.wikipedia.org/wiki/Byzantine_fault#:~:text=A%20Byzantine%20fault%20is%20any,require%20consensus%20among%20distributed%20nodes.
