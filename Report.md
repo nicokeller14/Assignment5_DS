@@ -23,6 +23,7 @@ Note: Some questions require you to take screenshots. In that case, please join 
 Source: https://medium.com/coinmonks/the-raft-algorithm-achieving-distributed-systems-consensus-e8c17542699b#:~:text=At%20its%20core%2C%20the%20Raft,other%20nodes%20in%20the%20system.
 https://thesecretlivesofdata.com/raft/
 
+
 2. Perform one request on the leader, wait until the leader is committed by all servers. Pause the simulation.
 Then perform a new request on the leader. Take a screenshot, stop the leader and then resume the simulation.
 Once, there is a new leader, perform a new request and then resume the previous leader. Once, this new request is committed by all servers, pause the simulation and take a screenshot. Explain what happened?
@@ -36,6 +37,7 @@ Once, there is a new leader, perform a new request and then resume the previous 
 > update its log to the new state of the rest of the cluster. This is what we call fault`s tolerance. This preserves data consistency and 
 > availability even if one leader goes down.
 
+
 3. Stop the current leader and two other servers. After a few increase in the Raft term, pause the simulation and take a screenshot. 
 Then resume all servers and restart the simulation. After the leader election, pause the simulation and take a screenshot. Explain what happened.
 
@@ -44,6 +46,7 @@ Then resume all servers and restart the simulation. After the leader election, p
 > new elections. So we have now a leaderless state, where a term is increased in every failed attempt to choose a new leader.
 > When resuming all the other nodes, the election process begins a new leader is chosen. This demonstrates raft's ability to handle multiple node failures, 
 > and even including the loss of a leader. 
+
 
 # Task 2
 
@@ -57,6 +60,7 @@ Indicate the replies that you get from the "/admin/status" endpoint of the HTTP 
 
 > As indicated here ('leader': TCPNode('127.0.0.1:6000'), 127.0.0.1:6000 which is Server 0 is clearly the leader.
 > And no in a Raft based system there can only be one leader at a time.
+
 
 Perform a Put request for the key ``a" on the leader. What is the new status? What changes occurred and why (if any)?
 
@@ -84,6 +88,7 @@ Perform an Append request for the key ``a" on the leader. What is the new status
 > When the follower successfully appends the new log entry sent by the leader, the match_idx is incremented. This 
 > indicates that the follower’s log is now matching the leader’s log up to this new index.
 
+
 Perform a Get request for the key ``a" on the leader. What is the new status? What change (if any) happened and why?
 
 > Ans: Here is the reply from 127.0.0.1:6000: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6000'), 'state': 2, 'leader': TCPNode('127.0.0.1:6000'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6001': 2, 'partner_node_status_server_127.0.0.1:6002': 0, 'readonly_nodes_count': 0, 'log_len': 2, 'last_applied': 4, 'commit_idx': 4, 'raft_term': 1, 'next_node_idx_count': 2, 'next_node_idx_server_127.0.0.1:6001': 5, 'next_node_idx_server_127.0.0.1:6002': 2, 'match_idx_count': 2, 'match_idx_server_127.0.0.1:6001': 4, 'match_idx_server_127.0.0.1:6002': 0, 'leader_commit_idx': 4, 'uptime': 1935, 'self_code_version': 0, 'enabled_code_version': 0}
@@ -97,6 +102,7 @@ So for clarification: PUT places values into /a and if there are already some th
 values are in /a. APPEND is similar to PUT however it doesn't overwrite what is in /a, but instead simply adds the value to the end of 
 the currently values in /a. 
 
+
 # Task 3
 
 Shut down the server that acts as a leader. Report the status that you get from the servers that remain active after shutting down the leader.
@@ -108,68 +114,72 @@ Shut down the server that acts as a leader. Report the status that you get from 
 > And Server 2 says the Server 1 is the leader:
 > {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6002'), 'state': 0, 'leader': TCPNode('127.0.0.1:6001'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6000': 0, 'partner_node_status_server_127.0.0.1:6001': 2, 'readonly_nodes_count': 0, 'log_len': 3, 'last_applied': 3, 'commit_idx': 3, 'raft_term': 3, 'next_node_idx_count': 0, 'match_idx_count': 0, 'leader_commit_idx': 3, 'uptime': 81, 'self_code_version': 0, 'enabled_code_version': 0}
 
+
 Perform a Put request for the key "a". Then, restart the server from the previous point, and indicate the new status for the three servers. Indicate the result of a Get request for the key ``a" to the previous leader.
 
 > Ans: DO I DO IT ON THE SERVER I HAVE SHUT DOWN OR ON THE CURRENT LEADER?
+
 
 Has the Put request been replicated? Indicate which steps lead to a new election and which ones do not. Justify your answer using the statuses returned by the servers.
 
 > Ans:
 
+
 Shut down two servers, including the leader --- starting with the server that is not the leader. Report the status of the remaining servers and explain what happened.
 
 > Ans:
 
+
 Can you perform Get, Put, or Append requests in this system state? Justify your answer.
 
 > Ans:
+
 
 Restart the servers and note down the new status. Describe what happened.
 
 > Ans:
 
 
-
-
 # Task 4
 
 1. What is a consensus algorithm? What are they used for in the context of replicated state machines? 
 
-Ans: A consensus algorithm is design to enable connections of distributed machines ie. different nodes to work together efficiently as a group
-even with the presence of failures and outages. It is used to achieve agreement on a single data value among distributed processes or systems. 
-So it is an algorithm that seeks an organized way of working of different machines that interact with 
-each other, ensuring that they will continue to work in a efficiently manner even if errors and failures are present.
-In practice, a consensus algorithm provides a way for multiple servers ro reach agreement on a state. Once there is consensus, the state is final and cannot
-be changed.
-When talking about replicated state machines, we ensure that each replica progresses in the same state. Also, this ensures consistency and 
-reliability because even if some nodes are down, the algorithm will continue working, ie the machines will continue working.
-So even in concurrent updates all replicas hold the same data.
+> Ans: A consensus algorithm is design to enable connections of distributed machines ie. different nodes to work together efficiently as a group
+> even with the presence of failures and outages. It is used to achieve agreement on a single data value among distributed processes or systems. 
+> So it is an algorithm that seeks an organized way of working of different machines that interact with 
+>  other, ensuring that they will continue to work in a efficiently manner even if errors and failures are present.
+> In practice, a consensus algorithm provides a way for multiple servers ro reach agreement on a state. Once there is consensus, the state is final and cannot
+> be changed.
+> When talking about replicated state machines, we ensure that each replica progresses in the same state. Also, this ensures consistency and 
+> reliability because even if some nodes are down, the algorithm will continue working, ie the machines will continue working.
+> So even in concurrent updates all replicas hold the same data.
 
-Sources: https://www.scylladb.com/glossary/consensus-algorithms/#:~:text=Consensus%20algorithms%20are%20designed%20to,scale%2C%20fault%2Dtolerant%20systems.
+> Sources: https://www.scylladb.com/glossary/consensus-algorithms/#:~:text=Consensus%20algorithms%20are%20designed%20to,scale%2C%20fault%2Dtolerant%20systems.
+
 
 2. What are the main features of the Raft algorithm? How does Raft enable fault toler- ance?
 
-Ans: The main features of the raft algorithm are: Leader election, log replication, safety and log matching, term concept and membership changes.
-DO WE NEED TO EXPLAIN?
-Fault tolerance in raft is handled this way:
-- If a leader fails, a new leader is elected, ensuring continued operation of the cluster.
-- we can ensure that the system can operate even if nodes are down by replicating the state across multiple nodes
-- once a log entry is seen as committed, it is guaranteed to be present in any future leader, providing data durability
-- as long as there is a mjority, consensus can be reached
-- log consistency and leader uniqueness are maintained even in the presence of network delays, partitions, and node restarts.
-- 
-Source: https://towardsdatascience.com/raft-algorithm-explained-a7c856529f40
+> Ans: The main features of the raft algorithm are: Leader election, log replication, safety and log matching, term concept and membership changes.
+> DO WE NEED TO EXPLAIN?
+> Fault tolerance in raft is handled this way:
+> - If a leader fails, a new leader is elected, ensuring continued operation of the cluster.
+> - we can ensure that the system can operate even if nodes are down by replicating the state across multiple nodes
+> - once a log entry is seen as committed, it is guaranteed to be present in any future leader, providing data durability
+> - as long as there is a mjority, consensus can be reached
+> - log consistency and leader uniqueness are maintained even in the presence of network delays, partitions, and node restarts.
+
+> Source: https://towardsdatascience.com/raft-algorithm-explained-a7c856529f40
 
 
 3. What are Byzantine failures? Can Raft handle them?
 
-Ans: We call it a Byzantine failure in the case that a fault is presenting different symptoms to different nodes/observers across
-a distributed system. So a Byzantine failure is the effective loss of a system service due to fault systems that indeed require consensus among the system
-and its nodes For example, a Byzantine node might send different, conflicting messages to different nodes, making it difficult for the system to reach a consensus.
-It is not only difficuly to reach consensus but also to identify the problem.
+> Ans: We call it a Byzantine failure in the case that a fault is presenting different symptoms to different nodes/observers across
+> a distributed system. So a Byzantine failure is the effective loss of a system service due to fault systems that indeed require consensus among the system
+> and its nodes For example, a Byzantine node might send different, conflicting messages to different nodes, making it difficult for the system to reach a consensus.
+> It is not only difficuly to reach consensus but also to identify the problem.
 
-And no, raft can't inherently handle these type of failures. The algorightm has to be updated in order to do so.
-It needs additional mechanisms to detect and mitigate deceitful or inconsistent behavior among nodes. 
+> And no, raft can't inherently handle these type of failures. The algorightm has to be updated in order to do so.
+> It needs additional mechanisms to detect and mitigate deceitful or inconsistent behavior among nodes. 
 
-Source: https://www.scs.stanford.edu/17au-cs244b/labs/projects/clow_jiang.pdf
-https://en.wikipedia.org/wiki/Byzantine_fault#:~:text=A%20Byzantine%20fault%20is%20any,require%20consensus%20among%20distributed%20nodes.
+> Source: https://www.scs.stanford.edu/17au-cs244b/labs/projects/clow_jiang.pdf
+> https://en.wikipedia.org/wiki/Byzantine_fault#:~:text=A%20Byzantine%20fault%20is%20any,require%20consensus%20among%20distributed%20nodes.
