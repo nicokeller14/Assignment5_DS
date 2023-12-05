@@ -58,6 +58,13 @@ Indicate the replies that you get from the "/admin/status" endpoint of the HTTP 
 > As indicated here ('leader': TCPNode('127.0.0.1:6000'), 127.0.0.1:6000 which is Server 0 is clearly the leader.
 > And no in a Raft based system there can only be one leader at a time.
 
+Perform a Put request for the key ``a" on the leader. What is the new status? What changes occurred and why (if any)?
+
+> Ans: The POST operation of Type PUT gives a 204 No Content response code.
+> What changed is that if we now run a get operation, /a now holds ["apple"} instead of ["cat", "dog"]. This shoes that a 
+> PUT operation rewrites what is currently stored in /a. 
+
+
 Perform an Append request for the key ``a" on the leader. What is the new status? What changes occurred and why (if any)?
 
 > Ans: Here is the reply from 127.0.0.1:6000: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6000'), 'state': 2, 'leader': TCPNode('127.0.0.1:6000'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6001': 2, 'partner_node_status_server_127.0.0.1:6002': 0, 'readonly_nodes_count': 0, 'log_len': 3, 'last_applied': 4, 'commit_idx': 4, 'raft_term': 1, 'next_node_idx_count': 2, 'next_node_idx_server_127.0.0.1:6001': 5, 'next_node_idx_server_127.0.0.1:6002': 2, 'match_idx_count': 2, 'match_idx_server_127.0.0.1:6001': 4, 'match_idx_server_127.0.0.1:6002': 0, 'leader_commit_idx': 4, 'uptime': 1484, 'self_code_version': 0, 'enabled_code_version': 0}
@@ -84,6 +91,11 @@ Perform a Get request for the key ``a" on the leader. What is the new status? Wh
 
 > The request says /a now holds "["cat", "dog", "mouse"]". And due to the fact that a GET request does not modify 
 > the state of the server, the status output stays mostly the same. 
+
+NOTE FOR TASK 2: We completed this task before you updated the README and so our answers/outputs might not line up to what is expected.
+So for clarification: PUT places values into /a and if there are already some there then they are overwritten. GET simply tells us which
+values are in /a. APPEND is similar to PUT however it doesn't overwrite what is in /a, but instead simply adds the value to the end of 
+the currently values in /a. 
 
 # Task 3
 
