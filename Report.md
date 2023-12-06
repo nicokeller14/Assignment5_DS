@@ -111,7 +111,7 @@ the currently values in /a.
 
 Shut down the server that acts as a leader. Report the status that you get from the servers that remain active after shutting down the leader.
 
-> Ans: Hre are the messages i get after running the /admin/status request. They both give 200 OK and the following complete responses:
+> Ans: Here are the messages i get after running the /admin/status request. They both give 200 OK and the following complete responses:
 > If i shut down Server 0 (the current leader), then Server 1 becomes the leader as can be seen here: 'leader': TCPNode('127.0.0.1:6001')
 > {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6001'), 'state': 2, 'leader': TCPNode('127.0.0.1:6001'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6002': 2, 'partner_node_status_server_127.0.0.1:6000': 0, 'readonly_nodes_count': 0, 'log_len': 3, 'last_applied': 3, 'commit_idx': 3, 'raft_term': 3, 'next_node_idx_count': 2, 'next_node_idx_server_127.0.0.1:6002': 4, 'next_node_idx_server_127.0.0.1:6000': 3, 'match_idx_count': 2, 'match_idx_server_127.0.0.1:6002': 3, 'match_idx_server_127.0.0.1:6000': 0, 'leader_commit_idx': 3, 'uptime': 62, 'self_code_version': 0, 'enabled_code_version': 0}
 
@@ -121,27 +121,73 @@ Shut down the server that acts as a leader. Report the status that you get from 
 
 Perform a Put request for the key "a". Then, restart the server from the previous point, and indicate the new status for the three servers. Indicate the result of a Get request for the key ``a" to the previous leader.
 
-> Ans: DO I DO IT ON THE SERVER I HAVE SHUT DOWN OR ON THE CURRENT LEADER?
+> Ans: So after doing a PUT request to the current leader (which is Server1 aka 6001 aka 8081) and then restarting Server0, we get the following 3 statuses:
+
+> The status of 8080 is: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6000'), 'state': 0, 'leader': TCPNode('127.0.0.1:6001'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6002': 2, 'partner_node_status_server_127.0.0.1:6001': 2, 'readonly_nodes_count': 0, 'log_len': 4, 'last_applied': 4, 'commit_idx': 4, 'raft_term': 3, 'next_node_idx_count': 0, 'match_idx_count': 0, 'leader_commit_idx': 4, 'uptime': 130, 'self_code_version': 0, 'enabled_code_version': 0}
+> The response code is 200 OK.
+ 
+> The status of 8081 is: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6001'), 'state': 2, 'leader': TCPNode('127.0.0.1:6001'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6002': 2, 'partner_node_status_server_127.0.0.1:6000': 2, 'readonly_nodes_count': 0, 'log_len': 2, 'last_applied': 4, 'commit_idx': 4, 'raft_term': 3, 'next_node_idx_count': 2, 'next_node_idx_server_127.0.0.1:6002': 5, 'next_node_idx_server_127.0.0.1:6000': 5, 'match_idx_count': 2, 'match_idx_server_127.0.0.1:6002': 4, 'match_idx_server_127.0.0.1:6000': 4, 'leader_commit_idx': 4, 'uptime': 357, 'self_code_version': 0, 'enabled_code_version': 0}
+> The response code is 200 OK.
+ 
+> The status of 8082 is: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6002'), 'state': 0, 'leader': TCPNode('127.0.0.1:6001'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6000': 2, 'partner_node_status_server_127.0.0.1:6001': 2, 'readonly_nodes_count': 0, 'log_len': 2, 'last_applied': 4, 'commit_idx': 4, 'raft_term': 3, 'next_node_idx_count': 0, 'match_idx_count': 0, 'leader_commit_idx': 4, 'uptime': 395, 'self_code_version': 0, 'enabled_code_version': 0}
+> The response code is 200 OK.
+
+> So after turning off Server0, Server1 became the leader and then after restarting Server0 Server1 is still the leader. And if we perform a 
+> GET request on the previous leader which is Server0, we get a 200 OK and that the value of /a is correctly also stored in Server0. 
+> The status code of this is as follows: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6000'), 'state': 0, 'leader': TCPNode('127.0.0.1:6001'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6002': 2, 'partner_node_status_server_127.0.0.1:6001': 2, 'readonly_nodes_count': 0, 'log_len': 2, 'last_applied': 4, 'commit_idx': 4, 'raft_term': 3, 'next_node_idx_count': 0, 'match_idx_count': 0, 'leader_commit_idx': 4, 'uptime': 491, 'self_code_version': 0, 'enabled_code_version': 0}
 
 
 Has the Put request been replicated? Indicate which steps lead to a new election and which ones do not. Justify your answer using the statuses returned by the servers.
 
-> Ans:
+> Ans: Yes as previously mentioned the PUT request was correctly replicated onto the newly restarted server. 
+> Here are the steps that lead to the election:
+> 1. Shutting down the server that acts as the current leader.
+> 2. Observing the status of the remaining servers after the leader is shut down.
+> 3. Restarting the server that was shut down (previously the leader).
+> 4. Checking the new statuses of all servers and the result of a GET request for a specific key to the previous leader.
+> As can be seen by the status codes, Server1 was elected to be leader after Server0 was shut down and even when Server0
+> came back online, Server1 remained the leader.
+ 
+> After applying the PUT request to an operational server (Server1) and then restarting the previously shut down Server0, we observed 2 things:
+> 1. Whether the PUT request gets replicated across the cluster, including the restarted server, which ensures data consistency and reliability.
+> 2. How the cluster handles the reintegration of a server that was previously down, especially in terms of leader election and data synchronization.
+> Finally, performing a GET request on the server that was initially shut down allowed us to verify if the state of the data is consistent 
+> across the cluster, including on a server that had temporarily been offline.
 
 
 Shut down two servers, including the leader --- starting with the server that is not the leader. Report the status of the remaining servers and explain what happened.
 
-> Ans:
+> Ans: We shut down first Server0 and then Server1 which is the current leader. 
+> The status code of Server2 is as follows: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6002'), 'state': 0, 'leader': TCPNode('127.0.0.1:6001'), 'has_quorum': False, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6000': 0, 'partner_node_status_server_127.0.0.1:6001': 0, 'readonly_nodes_count': 0, 'log_len': 2, 'last_applied': 4, 'commit_idx': 4, 'raft_term': 3, 'next_node_idx_count': 0, 'match_idx_count': 0, 'leader_commit_idx': 4, 'uptime': 1539, 'self_code_version': 0, 'enabled_code_version': 0}
+> This means that Server1 is still being called the leader by Server2. There are several possible reasons for this:
+> 1. Timing and Raft Election Timeouts: If the remaining server has not yet recognized that the leader is down (due to 
+> network delays, timing issues, or election timeouts not having expired), it might still consider the shut-down server 
+> as the leader. Raft relies on election timeouts to trigger a new election, and if this timeout has not yet elapsed, 
+> no new leader election would have been initiated.
+> 2. Quorum Requirement: In Raft, a majority of nodes (a quorum) is required to elect a new leader. With two out of 
+> three servers down, the system no longer has a quorum. This means the remaining server cannot elect itself or any 
+> other node as a new leader. The has_quorum: False status indicates this situation. Without a quorum, the cluster 
+> cannot make progress in terms of leader election or log replication.
+> 3. Stale Leader Information: The remaining server might still have stale information regarding the leader if it 
+> has not yet updated its state based on the latest cluster configuration. This can happen if the server has been 
+> isolated from the others due to network partitions or other failures.
 
 
 Can you perform Get, Put, or Append requests in this system state? Justify your answer.
 
-> Ans:
+> Ans:  GET requests are still possible (we tried one), however due to the previously mentioned lack of Quorum, PUT 
+> and APPEND requests are no longer possible. PUT or APPEND requests require consensus, which is not possible without 
+> a quorum.
 
 
 Restart the servers and note down the new status. Describe what happened.
 
-> Ans:
+> Ans: After restarting both server the statuses are as follows:
+> The status code of Server0 is as follows: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6000'), 'state': 0, 'leader': TCPNode('127.0.0.1:6002'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6001': 2, 'partner_node_status_server_127.0.0.1:6002': 2, 'readonly_nodes_count': 0, 'log_len': 3, 'last_applied': 5, 'commit_idx': 5, 'raft_term': 4, 'next_node_idx_count': 0, 'match_idx_count': 0, 'leader_commit_idx': 5, 'uptime': 178, 'self_code_version': 0, 'enabled_code_version': 0}
+> The status code of Server1 is as follows: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6001'), 'state': 0, 'leader': TCPNode('127.0.0.1:6002'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6000': 2, 'partner_node_status_server_127.0.0.1:6002': 2, 'readonly_nodes_count': 0, 'log_len': 3, 'last_applied': 5, 'commit_idx': 5, 'raft_term': 4, 'next_node_idx_count': 0, 'match_idx_count': 0, 'leader_commit_idx': 5, 'uptime': 128, 'self_code_version': 0, 'enabled_code_version': 0}
+> The status code of Server2 is as follows: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6002'), 'state': 2, 'leader': TCPNode('127.0.0.1:6002'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6000': 2, 'partner_node_status_server_127.0.0.1:6001': 2, 'readonly_nodes_count': 0, 'log_len': 3, 'last_applied': 5, 'commit_idx': 5, 'raft_term': 4, 'next_node_idx_count': 2, 'next_node_idx_server_127.0.0.1:6000': 6, 'next_node_idx_server_127.0.0.1:6001': 6, 'match_idx_count': 2, 'match_idx_server_127.0.0.1:6000': 5, 'match_idx_server_127.0.0.1:6001': 5, 'leader_commit_idx': 5, 'uptime': 2541, 'self_code_version': 0, 'enabled_code_version': 0}
+
+> So now Server2 has become the leader.
 
 
 # Task 4
@@ -151,7 +197,7 @@ Restart the servers and note down the new status. Describe what happened.
 > Ans: A consensus algorithm is design to enable connections of distributed machines ie. different nodes to work together efficiently as a group
 > even with the presence of failures and outages. It is used to achieve agreement on a single data value among distributed processes or systems. 
 > So it is an algorithm that seeks an organized way of working of different machines that interact with 
->  other, ensuring that they will continue to work in a efficiently manner even if errors and failures are present.
+>  other, ensuring that they will continue to work in an efficient manner even if errors and failures are present.
 > In practice, a consensus algorithm provides a way for multiple servers ro reach agreement on a state. Once there is consensus, the state is final and cannot
 > be changed.
 > When talking about replicated state machines, we ensure that each replica progresses in the same state. Also, this ensures consistency and 
