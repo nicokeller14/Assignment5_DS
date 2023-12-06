@@ -52,14 +52,18 @@ Then resume all servers and restart the simulation. After the leader election, p
 
 Indicate the replies that you get from the "/admin/status" endpoint of the HTTP service for each servers. Which server is the leader? Can there be multiple leaders?
 
-> Ans: Here is the reply from 127.0.0.1:6000: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6000'), 'state': 2, 'leader': TCPNode('127.0.0.1:6000'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6001': 2, 'partner_node_status_server_127.0.0.1:6002': 0, 'readonly_nodes_count': 0, 'log_len': 2, 'last_applied': 3, 'commit_idx': 3, 'raft_term': 1, 'next_node_idx_count': 2, 'next_node_idx_server_127.0.0.1:6001': 4, 'next_node_idx_server_127.0.0.1:6002': 2, 'match_idx_count': 2, 'match_idx_server_127.0.0.1:6001': 3, 'match_idx_server_127.0.0.1:6002': 0, 'leader_commit_idx': 3, 'uptime': 605, 'self_code_version': 0, 'enabled_code_version': 0}
+> Ans: Here is the reply from 127.0.0.1:6000: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6000'), 'state': 2, 'leader': TCPNode('127.0.0.1:6000'), 'has_quorum': True, 'partner_nodes_count': 3, 'partner_node_status_server_127.0.0.1:6001': 3, 'partner_node_status_server_127.0.0.1:6002': 0, 'readonly_nodes_count': 0, 'log_len': 2, 'last_applied': 3, 'commit_idx': 3, 'raft_term': 1, 'next_node_idx_count': 2, 'next_node_idx_server_127.0.0.1:6001': 4, 'next_node_idx_server_127.0.0.1:6002': 2, 'match_idx_count': 2, 'match_idx_server_127.0.0.1:6001': 3, 'match_idx_server_127.0.0.1:6002': 0, 'leader_commit_idx': 3, 'uptime': 605, 'self_code_version': 0, 'enabled_code_version': 0}
 > The POST operation of Type PUT gives a 204 No Content response code.
 
-> Here is the reply from 127.0.0.1:6001: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6001'), 'state': 0, 'leader': TCPNode('127.0.0.1:6000'), 'has_quorum': True, 'partner_nodes_count': 2, 'partner_node_status_server_127.0.0.1:6002': 0, 'partner_node_status_server_127.0.0.1:6000': 2, 'readonly_nodes_count': 0, 'log_len': 2, 'last_applied': 3, 'commit_idx': 3, 'raft_term': 1, 'next_node_idx_count': 0, 'match_idx_count': 0, 'leader_commit_idx': 3, 'uptime': 594, 'self_code_version': 0, 'enabled_code_version': 0}
-> The GET operation gives a 200 OK response code. 
+> Here is the reply from 127.0.0.1:6001: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6001'), 'state': 0, 'leader': TCPNode('127.0.0.1:6000'), 'has_quorum': True, 'partner_nodes_count': 3, 'partner_node_status_server_127.0.0.1:6002': 0, 'partner_node_status_server_127.0.0.1:6000': 3, 'readonly_nodes_count': 0, 'log_len': 2, 'last_applied': 3, 'commit_idx': 3, 'raft_term': 1, 'next_node_idx_count': 0, 'match_idx_count': 0, 'leader_commit_idx': 3, 'uptime': 594, 'self_code_version': 0, 'enabled_code_version': 0}
+> The GET operation gives a 200 OK response code.
 
-> As indicated here ('leader': TCPNode('127.0.0.1:6000'), 127.0.0.1:6000 which is Server 0 is clearly the leader.
-> And no in a Raft based system there can only be one leader at a time.
+> Here is the reply from 127.0.0.1:6002: {'version': '0.3.12', 'revision': 'deprecated', 'self': TCPNode('127.0.0.1:6002'), 'state': 0, 'leader': TCPNode('127.0.0.1:6000'), 'has_quorum': True, 'partner_nodes_count': 3, 'partner_node_status_server_127.0.0.1:6002': 0, 'partner_node_status_server_127.0.0.1:6000': 3, 'readonly_nodes_count': 0, 'log_len': 2, 'last_applied': 3, 'commit_idx': 3, 'raft_term': 1, 'next_node_idx_count': 0, 'match_idx_count': 0, 'leader_commit_idx': 3, 'uptime': 594, 'self_code_version': 0, 'enabled_code_version': 0}
+> The GET operation gives a 200 OK response code.
+
+> As indicated here in all three status calls ('leader': TCPNode('127.0.0.1:6000'), 127.0.0.1:6000 
+> which is Server 0 is clearly the leader. And no in a Raft based system there can only be one leader 
+> at a time in Raft time.
 
 
 Perform a Put request for the key ``a" on the leader. What is the new status? What changes occurred and why (if any)?
